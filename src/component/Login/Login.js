@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useCreateUserWithEmailAndPassword, useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import auth from '../../firebase.init';
 
 const Login = () => {
@@ -20,6 +20,14 @@ const Login = () => {
         createError,
     ] = useCreateUserWithEmailAndPassword(auth);
 
+    //for login with email and password...
+    const [
+        signInWithEmailAndPassword,
+        user,
+        loading,
+        error,
+    ] = useSignInWithEmailAndPassword(auth);
+
     const handleFormInput = event => {
         userInfo[event.target.name] = event.target.value;
     }
@@ -34,6 +42,8 @@ const Login = () => {
         if (!login) {
             setConfirmError('');
             createUserWithEmailAndPassword(userInfo.email, userInfo.password);
+        } else {
+            signInWithEmailAndPassword(userInfo.email, userInfo.password);
         }
 
     }
@@ -79,6 +89,9 @@ const Login = () => {
                         }
                         {
                             createUser && <p className='text-success'>User Create Successfully</p>
+                        }
+                        {
+                            user && <p className='text-success'>User Login Successfully</p>
                         }
                     </form>
                 </div>
