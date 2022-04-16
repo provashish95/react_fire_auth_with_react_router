@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const SingleUsers = ({ user, children }) => {
     const { email, phone, website } = children || {};
     const { name, username, id } = user || {};
-    console.log(user);
+    //console.log(user);
     return (
         <div className='col-4 gy-2'>
             <div className="card shadow-sm p-3 mb-2 bg-body rounded" style={{ width: '18rem' }}>
