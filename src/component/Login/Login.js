@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useCreateUserWithEmailAndPassword, useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import auth from '../../firebase.init';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [login, setLogin] = useState(false);
@@ -23,10 +25,13 @@ const Login = () => {
     //for login with email and password...
     const [
         signInWithEmailAndPassword,
-        user,
-        loading,
-        error,
+        signInUser,
+        signInLoading,
+        signInError,
     ] = useSignInWithEmailAndPassword(auth);
+
+    //user login or not .....
+    const [loginUser, loginLoading, loginError] = useAuthState(auth);
 
     const handleFormInput = event => {
         userInfo[event.target.name] = event.target.value;
@@ -34,18 +39,24 @@ const Login = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        if (userInfo.password !== userInfo.confirmPass) {
-            setConfirmError('Password can not match!');
-            return;
-        }
 
         if (!login) {
+            if (userInfo.password !== userInfo.confirmPass) {
+                setConfirmError('Password can not match!');
+                return;
+            }
             setConfirmError('');
             createUserWithEmailAndPassword(userInfo.email, userInfo.password);
         } else {
             signInWithEmailAndPassword(userInfo.email, userInfo.password);
         }
+    }
 
+    let navigate = useNavigate();
+    let location = useLocation();
+    let from = location.state?.from?.pathname || "/";
+    if (loginUser) {
+        navigate(from, { replace: true });
     }
 
     return (
@@ -76,7 +87,11 @@ const Login = () => {
                         }
                         <div className="mb-3 form-check">
                             <input onChange={() => setLogin(!login)} type="checkbox" className="form-check-input" id="exampleCheck1" />
-                            <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
+                            <label className="form-check-label" htmlFor="exampleCheck1">
+                                {
+                                    login ? 'Create an account?' : 'Have an account?'
+                                }
+                            </label>
                         </div>
                         <button type="submit" className="btn btn-primary">
                             {
@@ -91,7 +106,10 @@ const Login = () => {
                             createUser && <p className='text-success'>User Create Successfully</p>
                         }
                         {
-                            user && <p className='text-success'>User Login Successfully</p>
+                            signInUser && <p className='text-success'>User Login Successfully</p>
+                        }
+                        {
+                            signInError && <p className='text-danger'>{signInError.message}</p>
                         }
                     </form>
                 </div>
