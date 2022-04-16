@@ -1,0 +1,13 @@
+1.React router 
+    route
+    private route
+    outlet
+2.Firebase
+    react firebase hook
+3.React custom hook
+
+Requirements: 
+a.Bootstrap CDN 
+b.React firebase hook 
+c.firebase
+d.react router
